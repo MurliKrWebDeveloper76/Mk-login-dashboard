@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MK Login Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .dashboard {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            width: 400px;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dashboard::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0.3) 0%,
+                rgba(255, 255, 255, 0) 60%
+            );
+            transform: rotate(30deg);
+            pointer-events: none;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: bold;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        input:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .register-btn {
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+        }
+        
+        .form-toggle {
+            margin-top: 20px;
+            color: #666;
+        }
+        
+        .form-toggle a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .form-toggle a:hover {
+            text-decoration: underline;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="logo">MK</div>
+        <h1>Login Dashboard</h1>
+        
+        <div id="login-form">
+            <div class="form-group">
+                <label for="login-username">User ID</label>
+                <input type="text" id="login-username" placeholder="Enter your user ID">
+            </div>
+            <div class="form-group">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" placeholder="Enter your password">
+            </div>
+            <div id="login-error" class="error-message hidden"></div>
+            <button id="login-btn">Login</button>
+            <div class="form-toggle">
+                Don't have an account? <a href="#" id="show-register">Register</a>
+            </div>
+        </div>
+        
+        <div id="register-form" class="hidden">
+            <div class="form-group">
+                <label for="register-username">User ID</label>
+                <input type="text" id="register-username" placeholder="Choose a user ID">
+            </div>
+            <div class="form-group">
+                <label for="register-password">Password</label>
+                <input type="password" id="register-password" placeholder="Choose a password">
+            </div>
+            <div class="form-group">
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" placeholder="Confirm your password">
+            </div>
+            <div id="register-error" class="error-message hidden"></div>
+            <button id="register-btn" class="register-btn">Register</button>
+            <div class="form-toggle">
+                Already have an account? <a href="#" id="show-login">Login</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const showRegister = document.getElementById('show-register');
+        const showLogin = document.getElementById('show-login');
+        const loginBtn = document.getElementById('login-btn');
+        const registerBtn = document.getElementById('register-btn');
+        const loginError = document.getElementById('login-error');
+        const registerError = document.getElementById('register-error');
+        
+        // Toggle between login and register forms
+        showRegister.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginForm.classList.add('hidden');
+            registerForm.classList.remove('hidden');
+        });
+        
+        showLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            registerForm.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+        });
+        
+        // User storage (in a real app, this would be server-side)
+        const users = JSON.parse(localStorage.getItem('mk-users')) || {};
+        
+        // Registration
+        registerBtn.addEventListener('click', () => {
+            const username = document.getElementById('register-username').value.trim();
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            // Validation
+            if (!username || !password || !confirmPassword) {
+                registerError.textContent = 'All fields are required';
+                registerError.classList.remove('hidden');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                registerError.textContent = 'Passwords do not match';
+                registerError.classList.remove('hidden');
+                return;
+            }
+            
+            if (users[username]) {
+                registerError.textContent = 'Username already exists';
+                registerError.classList.remove('hidden');
+                return;
+            }
+            
+            // Store user (insecure for demo - in production, hash passwords)
+            users[username] = {
+                password: password,
+                createdAt: new Date().toISOString()
+            };
+            
+            localStorage.setItem('mk-users', JSON.stringify(users));
+            
+            // Switch to login form
+            registerForm.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+            registerError.classList.add('hidden');
+            
+            // Auto-fill login form
+            document.getElementById('login-username').value = username;
+            document.getElementById('login-password').value = '';
+            
+            alert('Registration successful! Please login.');
+        });
+        
+        // Login
+        loginBtn.addEventListener('click', () => {
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value;
+            
+            // Validation
+            if (!username || !password) {
+                loginError.textContent = 'Both fields are required';
+                loginError.classList.remove('hidden');
+                return;
+            }
+            
+            const user = users[username];
+            
+            if (!user || user.password !== password) {
+                loginError.textContent = 'Invalid username or password';
+                loginError.classList.remove('hidden');
+                return;
+            }
+            
+            // Successful login - redirect
+            loginError.classList.add('hidden');
+            authenticateAndRedirect(username, password);
+        });
+        
+        // Secure authentication and redirect
+        function authenticateAndRedirect(username, password) {
+            // In a real application, this would be a server-side check
+            // Here we're just simulating it with client-side checks
+            
+            // Anti-tampering checks
+            if (typeof localStorage === 'undefined' || 
+                typeof JSON === 'undefined' || 
+                typeof document === 'undefined') {
+                alert('Security violation detected');
+                return;
+            }
+            
+            // Check if users data has been tampered with
+            try {
+                const storedUsers = localStorage.getItem('mk-users');
+                if (!storedUsers) {
+                    alert('No user data found');
+                    return;
+                }
+                
+                JSON.parse(storedUsers);
+            } catch (e) {
+                alert('Data tampering detected');
+                return;
+            }
+            
+            // Verify the user exists and password matches
+            const user = users[username];
+            if (!user || user.password !== password) {
+                alert('Authentication failed');
+                return;
+            }
+            
+            // If all checks pass, redirect
+            window.location.href = 'https://d274dp7v20n4nf.cloudfront.net/file_library/videos/channel_vod_non_drm_hls/4414993/175034844671898752407/index_4.m3u8';
+        }
+        
+        // Prevent form submission on Enter key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+            }
+        });
+        
+        // Additional security measures
+        // Prevent right-click
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+        
+        // Prevent opening dev tools (not foolproof but adds a layer)
+        document.addEventListener('keydown', (e) => {
+            // F12
+            if (e.keyCode === 123) {
+                e.preventDefault();
+                alert('Developer tools are disabled');
+            }
+            // Ctrl+Shift+I
+            if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                e.preventDefault();
+                alert('Developer tools are disabled');
+            }
+            // Ctrl+Shift+J
+            if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
+                e.preventDefault();
+                alert('Developer tools are disabled');
+            }
+            // Ctrl+Shift+C
+            if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
+                e.preventDefault();
+                alert('Developer tools are disabled');
+            }
+            // Ctrl+U
+            if (e.ctrlKey && e.keyCode === 85) {
+                e.preventDefault();
+                alert('View source is disabled');
+            }
+        });
+    </script>
+</body>
+</html>
